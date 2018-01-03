@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Web development for beginners</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Know your html</h1>
+					<h2>Or: guess source code</h2>
+				</section>
+
+				<section>
+					<section>
+						<h2>What is the meaning of html?</h2>
+
+						<p class="fragment">
+							HTML purpose is to give meaning for content. <br />
+							Or for short: semantics.
+						</p>
+						<p class="fragment">
+							<strong>Not style</strong>
+						</p>
+					</section>
+
+					<section>
+						<h3>
+							Ok, but how about <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code>?
+						</h3>
+
+						<h4 class="fragment">
+							Hello to <code>&lt;strong&gt;</code> and <code>&lt;em&gt;</code>!
+						</h4>
+
+						<ul class="fragment">
+							<li>
+								<code>&lt;strong&gt;</code> represents a span of text with strong importance
+							</li>
+							<li>
+								<code>&lt;em&gt;</code> represents a span of text with emphatic stress
+							</li>
+						</ul>
+			  	</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Gues source code</h1>
+						<img src="images/let-the-games-begin.jpg" />
+					</section>
+
+					<section>
+						<h4>Round #1</h4>
+						<pre class="fragment">Do not forget to buy <mark>milk</mark> today.</pre>
+
+						<pre class="fragment"><code class="html">Do not forget to buy &lt;mark>milk&lt;/mark> today.</code></pre>
+					</section>
+
+					<section>
+						<h4>Round #2</h4>
+						<pre class="fragment"><p>progress: <meter value="0.6"></meter> 60%</p><p>progress: <progress value="0.25"></progress> 25%</p></pre>
+
+						<pre class="fragment"><code class="html"><p>progress: <meter value="0.6"></meter> 60%</p>
+<p>progress: <progress value="0.25"></progress> 25%</p></code></pre>
+					</section>
+					<section>
+						<h4>Round #3</h4>
+						<pre class="fragment">color: <input list="colors" name="colors"> <datalist id="colors"> <option value="red"> <option value="green"> <option value="blue"> </datalist></pre>
+
+						<pre class="fragment"><code class="html">color: &lt;input list="colors" name="colors">
+&lt;datalist id="colors">
+  &lt;option value="red">
+  &lt;option value="green">
+  &lt;option value="blue">
+&lt;/datalist></code></pre>
+					</section>
+					<section>
+						<h4>Round #4</h4>
+						<pre class="fragment"><details><summary>Click here for more details</summary><p>More details it is!</p></details></pre>
+
+						<pre class="fragment"><code class="html">&lt;details>
+  &lt;summary>Click here for more details&lt;/summary>
+  &lt;p>More details it is!&lt;/p>
+&lt;/details></code></pre>
+					</section>
+					<section>
+						<h4>Round #5</h4>
+						<pre class="fragment"><form oninput="x.value=parseInt(a.value)+parseInt(b.value)">0<input type="range" id="a" value="50">100 + <input type="number" id="b" value="50"> = <output name="x" for="a b"></output></form></pre>
+
+						<pre class="fragment"><code class="html"><form oninput="x.value=parseInt(a.value)+parseInt(b.value)">
+  0<input type="range" id="a" value="50">100
+  + <input type="number" id="b" value="50">
+  = <output name="x" for="a b"></output>
+</form></code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h1>Other tags</h1>
+						<ul>
+							<li class="fragment"><strong>time</strong> - defines a date/time</li>
+							<li class="fragment"><strong>wbr</strong> - possible line break</li>
+							<li class="fragment"><strong>del</strong>/<strong>ins</strong> - defines deletion/insertion</li>
+							<li class="fragment"><strong>figure</strong>  + <strong>figcaption</strong> - figure titles for images, tables, etc.</li>
+							<li class="fragment"><strong>picture</strong>  + <strong>source</strong> - multiple sources of same image</li>
+						</ul>
+					</section>
+					<section>
+						<h1>Attributes</h1>
+						https://www.w3schools.com/tags/ref_attributes.asp
+
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
