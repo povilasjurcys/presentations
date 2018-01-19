@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Authentication</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+		<link rel="stylesheet" href="overrides/css/pre_fix.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<section>
+						<h2>My, Myself and John Doe</h2>
+						<h4>Aka, session, current_user and impersonation</h4>
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						<h1>Problem</h1>
+					</section>
+
+					<section>
+						<h2>1. Keep same functionality</h2>
+						<img src="images/schema1.png" />
+					</section>
+
+					<section>
+						<h2>2. Sharding</h2>
+						<img src="images/schema2.png" />
+					</section>
+
+					<section>
+						<h2>3. Sharded user session</h2>
+						<img src="images/schema3.png" />
+					</section>
+
+					<section>
+						<h2>4. Sharded session data</h2>
+						<img src="images/schema4.png" />
+					</section>
+
+					<section>
+						<h2>5. Reusability</h2>
+						<img src="images/schema5.png" />
+					</section>
+
+					<section>
+						<h2>How to make it all work?</h2>
+						<img src="images/beatifull_mind.gif" />
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Let's start with understanding our options</h2>
+						<img src="images/easy_life.gif" />
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Cookie based session</h2>
+						<img src="images/cookie_monster.jpg" />
+					</section>
+
+					<section>
+						<h2>How does it work?</h2>
+						<ol>
+							<li class="fragment">The client sends a login request to the server.</li>
+							<li class="fragment">On login, the server includes the Set-Cookie header
+							  <pre><code>Set-Cookie: SESSION_ID=abcde12345; Path=/; HttpOnly</code></pre>
+							</li>
+							<li class="fragment">This cookie is now included in each request</li>
+							<li class="fragment">On the server side we store additional data associated with SESSION_ID
+								<pre><code class="ruby">Session.find_by(session_id: cookie['SESSION_ID']).user</code></pre>
+							</li>
+						</ol>
+					</section>
+
+					<section>
+						<h2>Good news!</h2>
+						<h3 class="fragment">We can access cookie in all subdomains</h3>
+					</section>
+
+					<section>
+						<h2>Bad news!</h2>
+						<h3 class="fragment">Shared data</h3>
+						<ul>
+							<li class="fragment">memcached</li>
+							<li class="fragment">global db users, clients, etc..</li>
+							<li class="fragment">user credentials are still in each shard</li>
+							<li class="fragment">user credentials are still in each shard</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>OAuth2</h2>
+					</section>
+
+					<section>
+						<h2>How does it work?</h2>
+						<img src="images/oauth2_flow.png" />
+					</section>
+
+					<section>
+						<h2>Good news!</h2>
+						<h3>No need for shared sessions!</h3>
+					</section>
+
+					<section>
+						<h2>Bad news!</h2>
+						<h3>We need to make sure that old passwords/tokens still work</h3>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>JWT: no need for session data at all</h2>
+					</section>
+
+					<section>
+						<h2>How does it work?</h2>
+						<img src="images/jwt.png" />
+					</section>
+
+					<section>
+						<h2>Good news!</h2>
+						<h3>No need for storing session data + plays nice with OAuth2</h3>
+					</section>
+
+					<section>
+						<h2>Bad news!</h2>
+						<h3>Not well researched, might be not suitable to legacy apps</h3>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3>Back to where we started</h3>
+						<img src="images/complicated.gif" />
+					</section>
+
+					<section>
+						<h2>Alternative #1</h2>
+						<img src="images/schema_alternative2.png" />
+					</section>
+
+					<section>
+						<h2>Alternative #2</h2>
+						<img src="images/schema_alternative1.png" />
+					</section>
+
+					<section>
+						<h2>Alternative #3</h2>
+						<img src="images/unicorns.gif" />
+					</section>
+				</section>
+
+				<section>
+					<h1>kthxbai</h1>
+					<img src="images/kthxbai.jpg" />
+				</section>
+			</section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
