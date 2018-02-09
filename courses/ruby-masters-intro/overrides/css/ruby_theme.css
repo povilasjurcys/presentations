@@ -14,3 +14,7 @@
 .reveal h5.subtopic {
   color: #888;
 }
+
+.reveal section img {
+  border: 0;
+}
