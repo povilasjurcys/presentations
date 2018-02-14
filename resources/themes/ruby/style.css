@@ -23,3 +23,7 @@
 .reveal section img {
   border: 0;
 }
+
+pre.code {
+  white-space: pre-line;
+}
