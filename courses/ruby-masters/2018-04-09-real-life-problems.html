@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Vilnius Ruby Masters: The Odin Project overview</title>
+		<title>Vilnius Ruby Masters: Theory VS Reality</title>
 
 		<link rel="stylesheet" href="../../resources//revealjs/css/reveal.css">
 		<link rel="stylesheet" href="../../resources//revealjs/css/theme/white.css">
@@ -28,64 +28,97 @@
 				<section>
 					<section data-background-image="../../resources//images/ruby_bg_faded.png" data-background-size="30%" data-background-position="80% 90%">
 						<h2>Vilnius Ruby Masters</h2>
-						<h4 class="subtopic">Intro to The Odin Project</h4>
+						<h4 class="subtopic">Theory VS Reality</h4>
 					</section>
 				</section>
 
 				<section>
 					<section>
-						<h2>Level of knowledge</h2>
+						<h2>Topics</h2>
 						<ul>
 							<li>level 1: what is programming language?</li>
-							<li>level 2: what is web development?</li>
-							<li>level 3: what is ruby on rails?</li>
-							<li>level 4: how to use c extensions in my ruby gem?</li>
 						</ul>
 					</section>
-				</section>
+        </section>
 
 				<section>
 					<section>
-						<h2>Web Development</h2>
-						<h4 class="subtopic">Basics</h4>
+						<h2>CSS: img { border: 5px; } VS img.frame { border: 5px } </h2>
+						<ul>
+							<li>level 1: what is programming language?</li>
+						</ul>
 					</section>
-
-					<section>
-						<h2>1-4 topics</h2>
-						<h4 class="subtopic">Optional</h4>
-					</section>
-
-					<section>
-						<h2>How Does the Web Work?</h2>
-						<h4 class="subtopic">level 1</h4>
-					</section>
-
-					<section>
-						<h2>Command Line Basics</h2>
-						<h4 class="subtopic">Mandatory for linux newbies</h4>
-					</section>
-
-					<section>
-						<h2>Project: Installations</h2>
-						<h5 class="subtopic fragment">Anyone had problems there?</h5>
-					</section>
-				</section>
+        </section>
 
 				<section>
 					<section>
-						<h2>Web Development</h2>
-						<h4 class="subtopic">Git Basics</h4>
+						<h2>Ruby: `array.pop`, `hash[:something] = 1`</h2>
+
 					</section>
+        </section>
+
+				<section>
+					<section>
+            <h2>Ruby: fancy caching `@user ||= User.new`</h2>
+
+            ```
+            def valid?
+              @valid ||= user_valid? # user_valid? takes 1 second
+            end
+            ```
+          </section>
 
 					<section>
-						<h2>All topics</h2>
-						<h4 class="subtopic">Skip if you know what's the difference between repository and branch</h4>
+            <h2>Ruby: constants</h2>
+
+            ```
+              class User
+                OLDEST_LOG_DATE = (Date.today - 7)
+
+                def clean_old_logs
+                  Logs.older_than(OLDEST_LOG_DATE).delete_all
+                end
+              end
+            ```
+
+            ```
+            class User
+              def clean_old_logs
+                Logs.older_than(self.class.oldest_log_date).delete_all
+              end
+
+              def self.oldest_log_date
+                (Date.today - 7)
+              end
+            end
+          ```
+					</section>
+
+
+					<section>
+            <h2>Ruby: `@user` VS `attr_reader :user`</h2>
+
+            ```
+            def load_data
+              @user = User.new
+            end
+
+            def do_something
+              foo(@user) if @user.active?
+            end
+            ```
+
+            ```
+            def user
+              @user ||= User.new
+            end
+            ```
 					</section>
 				</section>
 
 				<section>
 					<h1>kthxbai</h1>
-					<img src="../../resources//images/kthxbai.jpg" />
+					<img style="max-width: 650px" src="http://raredelights.com/wp-content/uploads/2013/10/Fennec-Fox.jpg" />
 				</section>
 			</section>
 
