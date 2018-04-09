@@ -1,77 +1,132 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Vilnius Ruby Masters: Theory VS Reality</title>
+    <title>Vilnius Ruby Masters: Theory VS Reality</title>
 
-		<link rel="stylesheet" href="../../resources//revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../../resources//revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../../resources//themes/ruby/style.css">
+    <link rel="stylesheet" href="../../resources/revealjs/css/reveal.css">
+    <link rel="stylesheet" href="../../resources/revealjs/css/theme/white.css">
+    <link rel="stylesheet" href="../../resources/themes/ruby/style.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="../../resources//revealjs/lib/css/zenburn.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="../../resources/revealjs/lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>
-					<section data-background-image="../../resources//images/ruby_bg_faded.png" data-background-size="30%" data-background-position="80% 90%">
-						<h2>Vilnius Ruby Masters</h2>
-						<h4 class="subtopic">Theory VS Reality</h4>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h2>Topics</h2>
-						<ul>
-							<li>level 1: what is programming language?</li>
-						</ul>
-					</section>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <section data-background-image="../../resources//images/ruby_bg_faded.png" data-background-size="30%" data-background-position="80% 90%">
+            <h2>Vilnius Ruby Masters</h2>
+            <h4 class="subtopic">Theory VS Reality</h4>
+          </section>
         </section>
 
-				<section>
-					<section>
-						<h2>CSS: img { border: 5px; } VS img.frame { border: 5px } </h2>
-						<ul>
-							<li>level 1: what is programming language?</li>
-						</ul>
-					</section>
-        </section>
-
-				<section>
-					<section>
-						<h2>Ruby: `array.pop`, `hash[:something] = 1`</h2>
-
-					</section>
-        </section>
-
-				<section>
-					<section>
-            <h2>Ruby: fancy caching `@user ||= User.new`</h2>
-
-            ```
-            def valid?
-              @valid ||= user_valid? # user_valid? takes 1 second
-            end
-            ```
+        <section>
+          <section>
+            <h3>Where are we?</h3>
+            <img src="https://vignette.wikia.nocookie.net/ppc/images/e/e9/You_are_here_galaxy.jpg/revision/latest?cb=20100429195853" />
           </section>
 
-					<section>
+          <section>
+            <h3>What will happen next?</h3>
+            <ul>
+              <li class="fragment">We will continue theodinproject</li>
+              <li class="fragment">We will will meet *every* week</li>
+              <li class="fragment">We will have ruby exam</li>
+              <li class="fragment">???</li>
+              <li class="fragment">Profit</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Dangers and how to avoid them</h3>
+            <img src="http://www.relatably.com/m/img/dangerous-memes/danger-zone-meme-generator-welcome-to-the-danger-zone-962478.jpg"/>
+          </section>
+
+          <section>
+            <h2>CSS: global selectors</h2>
+            <pre><code class="css">img { border: 5px; }</code></pre>
+            VS
+            <pre><code class="css">.fancy-image { border: 5px; }</code></pre>
+          </section>
+
+          <section>
+            <h2>CSS: global selectors</h2>
+            <pre><code class="css">img { border: 5px; }</code></pre>
+            VS
+            <pre><code class="css">.fancy-image { border: 5px; }</code></pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>HTML: machine readable</h2>
+            <pre><code class="html" data-trim>
+              <img src="#"/>
+            </code></pre>
+            VS
+            <pre><code class="html" data-trim>
+              <img class="portfolio-pic" src="#"/>
+            </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Principle of least astonishment (POLA)</h3>
+            <pre class="fragment"><code class="ruby" data-trim>
+              def display_status(log, options)
+                if log.pop == 'party: started'
+                  options[:party] = true
+                end
+                print_event_info(options)
+              end
+            </code></pre>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def display_status(log, options)
+                if log.first == 'party: started'
+                  options = options.merge(party: true)
+                end
+                print_event_info(options)
+              end
+            </code></pre>
+
+          </section>
+          <section>
+            <h2>Ruby: fancy caching</h2>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def calculate_or_return_fast
+                @result ||= very_sloooow_calculation
+              end
+            </code></pre>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def very_sloooow_calculation
+                result = do_some_heavy_work_here
+                result > 0 ? result : nil
+              end
+            </code></pre>
+          </section>
+
+          <section>
             <h2>Ruby: constants</h2>
 
-            ```
+            <pre class="fragment"><code class="ruby" data-trim>
               class User
                 OLDEST_LOG_DATE = (Date.today - 7)
 
@@ -79,67 +134,98 @@
                   Logs.older_than(OLDEST_LOG_DATE).delete_all
                 end
               end
-            ```
+            </code></pre>
 
-            ```
-            class User
-              def clean_old_logs
-                Logs.older_than(self.class.oldest_log_date).delete_all
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User
+                def clean_old_logs
+                  Logs.older_than(self.class.oldest_log_date).delete_all
+                end
+
+                def self.oldest_log_date
+                  (Date.today - 7)
+                end
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Ruby: getter VS instance var</h2>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def initialize
+                @users = [User.new]
               end
 
-              def self.oldest_log_date
-                (Date.today - 7)
+              def do_something
+                foo(@users) if @users.first.active?
               end
-            end
-          ```
-					</section>
+            </code></pre>
 
+            <pre class="fragment"><code class="ruby" data-trim>
+              def users
+                @user ||= [User.new] # i can change it to [AdminUser.new]
+              end
 
-					<section>
-            <h2>Ruby: `@user` VS `attr_reader :user`</h2>
+              def do_something
+                foo(users) if users.first.active?
+              end
+            </code></pre>
+          </section>
 
-            ```
-            def load_data
-              @user = User.new
-            end
+          <section>
+            <h2>GIT: to big PR</h2>
+            <img src="../../resources/images/big-pr.png" />
+          </section>
 
-            def do_something
-              foo(@user) if @user.active?
-            end
-            ```
+          <section>
+            <h2>OOP: naming</h2>
 
-            ```
-            def user
-              @user ||= User.new
-            end
-            ```
-					</section>
-				</section>
+            <pre class="fragment"><code class="ruby" data-trim>
+              # calculates active user friends count
+              def calculate_value
+                users.select(&:active).map { |user| user.friends.count }.sum
+              end
+            </code></pre>
 
-				<section>
-					<h1>kthxbai</h1>
-					<img style="max-width: 650px" src="http://raredelights.com/wp-content/uploads/2013/10/Fennec-Fox.jpg" />
-				</section>
-			</section>
+            <pre class="fragment"><code class="ruby" data-trim>
+              def active_users_friends_count
+                users.select(&:active).map { |user| user.friends.count }.sum
+              end
+            </code></pre>
+          </section>
+        </section>
 
-			</div>
-		</div>
+        <section>
+          <h1>Our mistakes</h1>
+        </section>
 
-		<script src="../../resources//revealjs/lib/js/head.min.js"></script>
-		<script src="../../resources//revealjs/js/reveal.js"></script>
+        <section>
+          <h1>kthxbai</h1>
+          <img style="max-width: 650px" src="http://raredelights.com/wp-content/uploads/2013/10/Fennec-Fox.jpg" />
+        </section>
+      </section>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: '../../../resources/revealjs/plugin/markdown/marked.js' },
-					{ src: '../../../resources/revealjs/plugin/markdown/markdown.js' },
-					{ src: '../../../resources/revealjs/plugin/notes/notes.js', async: true },
-					{ src: '../../../resources/revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+      </div>
+    </div>
+
+    <script src="../../resources/revealjs/lib/js/head.min.js"></script>
+    <script src="../../resources/revealjs/js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        history: true,
+
+        dependencies: [
+          { src: '../../resources/revealjs/plugin/markdown/marked.js' },
+          { src: '../../resources/revealjs/plugin/markdown/markdown.js' },
+          { src: '../../resources/revealjs/plugin/notes/notes.js', async: true },
+          { src: '../../resources/revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+  </body>
 </html>
