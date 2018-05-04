@@ -1,0 +1,450 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Vilnius Ruby Masters: Theory VS Reality</title>
+
+    <link rel="stylesheet" href="../../resources/lib/fontawesome/fontawesome-all.min.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../resources/revealjs/css/reveal.css">
+    <link rel="stylesheet" href="../../resources/revealjs/css/theme/white.css">
+    <link rel="stylesheet" href="../../resources/themes/ruby/style.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="../../resources/revealjs/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <section data-background-image="../../resources//images/ruby_bg_faded.png" data-background-size="30%" data-background-position="80% 90%">
+            <h2>Vilnius Ruby Masters</h2>
+            <h4 class="subtopic">Testing</h4>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Topics</h3>
+            <ul>
+              <li class="fragment">RSpec components</li>
+              <li class="fragment">RSpec and RoR</li>
+              <li class="fragment">What [not] to test</li>
+              <li class="fragment">Edge cases</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Boring. Lets code!</h3>
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User
+                attr_reader :first_name, :last_name
+
+                def initialize(first_name:, last_name:)
+                  @first_name = first_name
+                  @last_name = last_name
+                end
+
+                def full_name
+                  [first_name, last_name].join(' ')
+                end
+              end
+            </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>RSpec components</h2>
+          </section>
+
+          <section>
+            <h3>Our first test</h3>
+            <pre class="fragment"><code class="ruby" data-trim>
+              describe User do
+                subject(:user) do
+                  User.new(first_name: 'John', last_name: 'Doe')
+                end
+
+                describe '#full_name' do
+                  it 'has correct full name' do
+                    expect(user.full_name).to eq('John Doe')
+                  end
+                end
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>`subject`</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              subject(:user) do
+                User.new(first_name: 'John', last_name: 'Doe')
+              end
+
+              describe '#full_name' do
+                subject(:full_name) { user.full_name } # !
+
+                it { is_expected.to eq 'John Doe' }
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>`let`</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              subject(:user) do
+                User.new(first_name: first_name, last_name: last_name) # !
+              end
+
+              let(:first_name) { 'John' } # !
+              let(:last_name) { 'Doe' } # !
+
+              describe '#full_name' do
+                subject(:full_name) { user.full_name }
+
+                it { is_expected.to eq 'John Doe' }
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>`context`</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              # ...
+              describe '#full_name' do
+                subject(:full_name) { user.full_name }
+
+                context 'when last name is missing' do # !
+                  let(:last_name) { nil }
+                  it { is_expected.to eq 'John' }
+                end
+
+                context 'when first and last name are given' do # !
+                  it { is_expected.to eq 'John Doe' }
+                end
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>Lets code little more!</h3>
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User
+                # ...
+                def friends_count
+                  FacebookApi.get('friends_count')
+                end
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>`before`</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              # ...
+              describe '#friends_count' do
+                before do
+                  allow(FacebookApi).to receive(:get).and_return(5)
+                end
+
+                it 'returns correct friends number' do
+                  expect(user.friends_count).to eq 5
+                end
+              end
+            </code></pre>
+          </section>
+          <section>
+            <h2>`allow` (stub)</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              # ...
+              describe '#friends_count' do
+                before do
+                  allow(FacebookApi).to receive(:get).and_return(5) # !
+                end
+
+                it 'makes facebook request' do
+                  user.friends_count
+                  expect(FacebookApi).to have_received(:get)
+                end
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>`expect` (mock)</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              # ...
+              describe '#friends_count' do
+                it 'makes facebook request' do
+                  expect(FacebookApi).to receive(:get).and_return(5) # !
+                  user.friends_count
+                end
+              end
+            </code></pre>
+          </section>
+        </section>
+
+
+        <section>
+          <section>
+            <h2>RSpec and Ruby on Rails</h2>
+          </section>
+
+          <section>
+            <h2>Why?</h2>
+
+            <ul>
+              <li class="fragment">Rails projects has many gems and magic</li>
+              <li class="fragment">Rails project has a lot of class dependencies</li>
+              <li class="fragment">Rails project has more kinds of tests: model, controller, helper</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>So... Lets code!</h3>
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User < ActiveRecord::Base
+                def full_name # first_name and last_name are columns in DB
+                  [first_name, last_name].join(' ')
+                end
+              end
+            </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>What [not] to test?</h2>
+          </section>
+          <section>
+            <h2>TL;DR;</h2>
+            <h3 class="fragment">test public methods written by you</h3>
+          </section>
+          <section>
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User < ActiveRecord::Base
+                has_many :friends
+                validates :shop, presence: true
+
+                def full_name
+                  "#{first_name} #{last_name}"
+                end
+
+                def active_friends
+                  friends.select { |friend| active_friend?() }
+                end
+
+                private
+
+                def active_friend?(friend)
+                  friend.last_message_date > 1.year.ago
+                end
+              end
+            </code></pre>
+          </section>
+
+            <ul>
+              <li class="fragment"><i class="fas fa-check" style="color:green"></i>Business logic</li>
+              <li class="fragment">Edge cases</li>
+              <li class="fragment">RSpec and RoR</li>
+              <li class="fragment">RSpec components</li>
+            </ul>
+
+            <pre><code class="css">img { border: 5px; }</code></pre>
+            VS
+            <pre><code class="css">.fancy-image { border: 5px; }</code></pre>
+          </section>
+
+          <section>
+            <h2>CSS: global selectors</h2>
+            <pre><code class="css">img { border: 5px; }</code></pre>
+            VS
+            <pre><code class="css">.fancy-image { border: 5px; }</code></pre>
+          </section>
+
+          <section>
+            <h2>HTML: machine readable</h2>
+            <pre><code class="html" data-trim>
+              <img src="#"/>
+            </code></pre>
+            VS
+            <pre><code class="html" data-trim>
+              <img class="portfolio-pic" src="#"/>
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>Principle of least astonishment (POLA)</h3>
+            <pre class="fragment"><code class="ruby" data-trim>
+              def display_status(log, options)
+                if log.pop == 'party: started'
+                  options[:party] = true
+                end
+                print_event_info(options)
+              end
+            </code></pre>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def display_status(log, options)
+                if log.first == 'party: started'
+                  options = options.merge(party: true)
+                end
+                print_event_info(options)
+              end
+            </code></pre>
+
+          </section>
+          <section>
+            <h2>Ruby: fancy caching</h2>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def calculate_or_return_fast
+                @result ||= very_sloooow_calculation
+              end
+            </code></pre>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def very_sloooow_calculation
+                result = do_some_heavy_work_here
+                result > 0 ? result : nil
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Ruby: constants</h2>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User
+                OLDEST_LOG_DATE = (Date.today - 7)
+
+                def clean_old_logs
+                  Logs.older_than(OLDEST_LOG_DATE).delete_all
+                end
+              end
+            </code></pre>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User
+                def clean_old_logs
+                  Logs.older_than(self.class.oldest_log_date).delete_all
+                end
+
+                def self.oldest_log_date
+                  (Date.today - 7)
+                end
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Ruby: getter VS instance var</h2>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def initialize
+                @users = [User.new]
+              end
+
+              def do_something
+                foo(@users) if @users.first.active?
+              end
+            </code></pre>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def users
+                @user ||= [User.new] # i can change it to [AdminUser.new]
+              end
+
+              def do_something
+                foo(users) if users.first.active?
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>GIT: to big PR</h2>
+            <img src="../../resources/images/big-pr.png" />
+          </section>
+
+          <section>
+            <h2>OOP: naming</h2>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              # calculates active user friends count
+              def calculate_value
+                users.select(&:active).map { |user| user.friends.count }.sum
+              end
+            </code></pre>
+
+            <pre class="fragment"><code class="ruby" data-trim>
+              def active_users_friends_count
+                users.select(&:active).map { |user| user.friends.count }.sum
+              end
+            </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <h1>Our mistakes</h1>
+          <img src="http://s2.quickmeme.com/img/e6/e6fe683da9cf5a1ef6dfdf7d5bc623acc6ce2a7500c54fd66204d7d0644180ef.jpg" />
+        </section>
+
+        <section>
+          <section>
+            <h3>Where are we now?</h3>
+            <img style="min-width: 400px;" src="https://i.redd.it/hbf9b1q6jz301.png" />
+          </section>
+
+          <section>
+            <h3>What will happen next?</h3>
+            <ul>
+              <li class="fragment">We will continue theodinproject</li>
+              <li class="fragment">We will meet <em>every</em> week</li>
+              <li class="fragment">We will have ruby exam</li>
+              <li class="fragment">We will have Linkedin status updates</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <h1>kthxbai</h1>
+          <img style="max-width: 650px" src="http://raredelights.com/wp-content/uploads/2013/10/Fennec-Fox.jpg" />
+        </section>
+      </section>
+
+      </div>
+    </div>
+
+    <script src="../../resources/revealjs/lib/js/head.min.js"></script>
+    <script src="../../resources/revealjs/js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        history: true,
+
+        dependencies: [
+          { src: '../../resources/revealjs/plugin/markdown/marked.js' },
+          { src: '../../resources/revealjs/plugin/markdown/markdown.js' },
+          { src: '../../resources/revealjs/plugin/notes/notes.js', async: true },
+          { src: '../../resources/revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+  </body>
+</html>
