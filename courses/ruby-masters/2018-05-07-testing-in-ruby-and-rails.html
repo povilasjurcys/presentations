@@ -38,9 +38,8 @@
             <h3>Topics</h3>
             <ul>
               <li class="fragment">RSpec components</li>
-              <li class="fragment">RSpec and RoR</li>
               <li class="fragment">What [not] to test</li>
-              <li class="fragment">Edge cases</li>
+              <li class="fragment">TDD or not TDD?</li>
             </ul>
           </section>
         </section>
@@ -197,232 +196,135 @@
           </section>
         </section>
 
-
-        <section>
-          <section>
-            <h2>RSpec and Ruby on Rails</h2>
-          </section>
-
-          <section>
-            <h2>Why?</h2>
-
-            <ul>
-              <li class="fragment">Rails projects has many gems and magic</li>
-              <li class="fragment">Rails project has a lot of class dependencies</li>
-              <li class="fragment">Rails project has more kinds of tests: model, controller, helper</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3>So... Lets code!</h3>
-            <pre class="fragment"><code class="ruby" data-trim>
-              class User < ActiveRecord::Base
-                def full_name # first_name and last_name are columns in DB
-                  [first_name, last_name].join(' ')
-                end
-              end
-            </code></pre>
-          </section>
-        </section>
-
         <section>
           <section>
             <h2>What [not] to test?</h2>
           </section>
+
+
+          <section>
+            <h2>Lets code a little bit</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User < ActiveRecord::Base
+                validates :name, length: { minimum: 5 }
+                validates :email, format: { with: /\w@\w/ }
+                # ...
+              end
+
+              RSpec.describe User do
+                subject(:user) { user.new(email: email, name: name) }
+                let(:email) { 'john@example.com' }
+                let(:name) { 'john' }
+              end
+            </code></pre>
+          </section>
+          <section>
+            <h2>Rule #1</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              it 'has valid length' do
+                expect(User).to validate_length_of(:name).is_at_least(5)
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Rule #1</h2>
+            <h3 class="fragment">Trust yourself. Do not test existence of code</h3>
+          </section>
+          <section>
+            <h2>Rule #2</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              describe '#valid?' do
+                subject(:is_valid) { user.valid? }
+
+                context 'when name is short' do
+                  let(:name) { 'j' }
+                  it { is_expected.to be false} # better. still not good. Why?
+                end
+
+                context 'when email is incorrect' do
+                  let(:email) { 'e@@m.zz' }
+                  it { is_expected.to be false } # good. Why?
+                end
+              end
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Rule #2</h2>
+            <h3 class="fragment">Trust your gems test coverage. Do not test logic of your gems</h3>
+          </section>
+
+          <section>
+            <h2>Rule #3</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              class User
+                MAX_FRIENDS_COUNT = 100
+                def non_friends_count
+                  MAX_FRIENDS_COUNT - friends_count
+                end
+              end
+
+              describe '#non_friends_count' do
+                before { allow(user).to receive(:friends_count) { 10 } }
+                it 'returns correct number' do
+                  expect(user.non_friends_count).to eq 90 # good
+                  expect(user).to have_received(:friends_count) # bad
+                end
+              end
+            </code></pre>
+          </section>
+          <section>
+            <h2>Rule #3</h2>
+            <h3 class="fragment">Test business logic</h3>
+          </section>
+          <section>
+            <h2>Rule #4</h2>
+            <pre class="fragment"><code class="ruby" data-trim>
+              # bad
+            </code></pre>
+          </section>
+          <section>
+            <h2>Rule #4</h2>
+            <h3 class="fragment">Always test your code</h3>
+          </section>
+
           <section>
             <h2>TL;DR;</h2>
             <h3 class="fragment">test public methods written by you</h3>
           </section>
-          <section>
-            <pre class="fragment"><code class="ruby" data-trim>
-              class User < ActiveRecord::Base
-                has_many :friends
-                validates :shop, presence: true
-
-                def full_name
-                  "#{first_name} #{last_name}"
-                end
-
-                def active_friends
-                  friends.select { |friend| active_friend?() }
-                end
-
-                private
-
-                def active_friend?(friend)
-                  friend.last_message_date > 1.year.ago
-                end
-              end
-            </code></pre>
-          </section>
-
-            <ul>
-              <li class="fragment"><i class="fas fa-check" style="color:green"></i>Business logic</li>
-              <li class="fragment">Edge cases</li>
-              <li class="fragment">RSpec and RoR</li>
-              <li class="fragment">RSpec components</li>
-            </ul>
-
-            <pre><code class="css">img { border: 5px; }</code></pre>
-            VS
-            <pre><code class="css">.fancy-image { border: 5px; }</code></pre>
-          </section>
-
-          <section>
-            <h2>CSS: global selectors</h2>
-            <pre><code class="css">img { border: 5px; }</code></pre>
-            VS
-            <pre><code class="css">.fancy-image { border: 5px; }</code></pre>
-          </section>
-
-          <section>
-            <h2>HTML: machine readable</h2>
-            <pre><code class="html" data-trim>
-              <img src="#"/>
-            </code></pre>
-            VS
-            <pre><code class="html" data-trim>
-              <img class="portfolio-pic" src="#"/>
-            </code></pre>
-          </section>
-
-          <section>
-            <h3>Principle of least astonishment (POLA)</h3>
-            <pre class="fragment"><code class="ruby" data-trim>
-              def display_status(log, options)
-                if log.pop == 'party: started'
-                  options[:party] = true
-                end
-                print_event_info(options)
-              end
-            </code></pre>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              def display_status(log, options)
-                if log.first == 'party: started'
-                  options = options.merge(party: true)
-                end
-                print_event_info(options)
-              end
-            </code></pre>
-
-          </section>
-          <section>
-            <h2>Ruby: fancy caching</h2>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              def calculate_or_return_fast
-                @result ||= very_sloooow_calculation
-              end
-            </code></pre>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              def very_sloooow_calculation
-                result = do_some_heavy_work_here
-                result > 0 ? result : nil
-              end
-            </code></pre>
-          </section>
-
-          <section>
-            <h2>Ruby: constants</h2>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              class User
-                OLDEST_LOG_DATE = (Date.today - 7)
-
-                def clean_old_logs
-                  Logs.older_than(OLDEST_LOG_DATE).delete_all
-                end
-              end
-            </code></pre>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              class User
-                def clean_old_logs
-                  Logs.older_than(self.class.oldest_log_date).delete_all
-                end
-
-                def self.oldest_log_date
-                  (Date.today - 7)
-                end
-              end
-            </code></pre>
-          </section>
-
-          <section>
-            <h2>Ruby: getter VS instance var</h2>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              def initialize
-                @users = [User.new]
-              end
-
-              def do_something
-                foo(@users) if @users.first.active?
-              end
-            </code></pre>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              def users
-                @user ||= [User.new] # i can change it to [AdminUser.new]
-              end
-
-              def do_something
-                foo(users) if users.first.active?
-              end
-            </code></pre>
-          </section>
-
-          <section>
-            <h2>GIT: to big PR</h2>
-            <img src="../../resources/images/big-pr.png" />
-          </section>
-
-          <section>
-            <h2>OOP: naming</h2>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              # calculates active user friends count
-              def calculate_value
-                users.select(&:active).map { |user| user.friends.count }.sum
-              end
-            </code></pre>
-
-            <pre class="fragment"><code class="ruby" data-trim>
-              def active_users_friends_count
-                users.select(&:active).map { |user| user.friends.count }.sum
-              end
-            </code></pre>
-          </section>
-        </section>
-
-        <section>
-          <h1>Our mistakes</h1>
-          <img src="http://s2.quickmeme.com/img/e6/e6fe683da9cf5a1ef6dfdf7d5bc623acc6ce2a7500c54fd66204d7d0644180ef.jpg" />
         </section>
 
         <section>
           <section>
-            <h3>Where are we now?</h3>
-            <img style="min-width: 400px;" src="https://i.redd.it/hbf9b1q6jz301.png" />
+            <h2>TDD or not TDD?</h2>
+            <img src="https://3.bp.blogspot.com/-Wh4E-E-fLbg/WIMc5S50NHI/AAAAAAAAINk/10csazaVSsAlkqzeuowJrjrOGKCeLT6WgCLcB/s1600/image.png" />
           </section>
-
           <section>
-            <h3>What will happen next?</h3>
-            <ul>
-              <li class="fragment">We will continue theodinproject</li>
-              <li class="fragment">We will meet <em>every</em> week</li>
-              <li class="fragment">We will have ruby exam</li>
-              <li class="fragment">We will have Linkedin status updates</li>
-            </ul>
+            <h2>Benefits</h2>
+            <img src="https://image.slidesharecdn.com/tddclass1-140810042317-phpapp01/95/test-driven-development-part-1-5-638.jpg?cb=1407644706" />
+          </section>
+          <section>
+            <h2>But...</h2>
+            <blockquote cite="https://blog.acolyer.org/2017/06/13/a-dissection-of-the-test-driven-development-process-does-it-really-matter-to-test-first-or-test-last/">
+              This is surprising as it implies the sequence in which writing test and production code are interleaved is not a prominent feature. The finding counters the common folklore within the agile software development community
+            </blockquote>
           </section>
         </section>
 
-        <section>
-          <h1>kthxbai</h1>
-          <img style="max-width: 650px" src="http://raredelights.com/wp-content/uploads/2013/10/Fennec-Fox.jpg" />
-        </section>
+      </section>
+      <section>
+        <h1>Summary</h1>
+        <ul>
+          <li class="fragment">Tests will save your time</li>
+          <li class="fragment">Tests will improve quality of your app</li>
+          <li class="fragment">Tests give you trust when working with code of others</li>
+        </ul>
+      </section>
+
+      <section>
+        <h1>kthxbai</h1>
+        <img style="max-width: 650px" src="https://i1.wp.com/novatrending.com/wp-content/uploads/2016/12/Cutest-Animals-That-Can-Still-Destroy-You-7.jpg?fit=1280%2C720&ssl=1" />
       </section>
 
       </div>
